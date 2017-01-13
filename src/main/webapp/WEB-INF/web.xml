@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<display-name>Cmdi2Marc</display-name>
+
+	<listener>
+        <description>Used to cleanup when a session is destroyed</description>
+        <display-name>Tmp files session cleaner</display-name>
+		<listener-class>de.tuebingen.uni.sfs.cmdi2marc.SessionTmpDir</listener-class>
+    </listener>
+	
+    <servlet>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<init-param> 
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>de.tuebingen.uni.sfs.cmdi2marc;org.codehaus.jackson.jaxrs</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+	
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+	
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>
