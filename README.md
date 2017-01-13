@@ -7,7 +7,7 @@ For more information, please contact claus.zinn@uni-tuebingen.de
 
 The conversion from CMDI to MARC21 is currently being served at:
 
-```http://weblicht.sfs.uni-tuebingen.de/converter/Cmdi2Marc/```
+```http://weblicht.sfs.uni-tuebingen.de/converter/Cmdi2Marc/ ```
 
 # Status
 The software is being released as v1.0.
