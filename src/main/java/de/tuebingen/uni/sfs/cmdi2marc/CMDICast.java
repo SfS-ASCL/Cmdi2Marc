@@ -152,8 +152,8 @@ public class CMDICast {
                     
 			// now apply the xquery
 			XQPreparedExpression expr = conn.prepareExpression(cmdi2marcStream);
-                        expr.bindDocument(new QName("cmdSchema"),   dynamicSchemaStream, null, null);
-			expr.bindDocument(new QName("cmdInstance"), cmdiInstanceStream,  null, null);
+                        expr.bindDocument(new QName("cmdCCSL"),   dynamicSchemaStream, null, null);
+			expr.bindDocument(new QName("cmdInstancepath"), cmdiInstanceStream,  null, null);
 			XQResultSequence result = expr.executeQuery(); 
 
 			Properties props = new Properties();
