@@ -179,9 +179,10 @@ declare variable $cmdInstancepath external;
 			</facet>
 		</datcatmap>
 		,
-		$ccslinstance := doc($cmdCCSL),
-		$cmdInstance := doc($cmdInstancepath)
-		   (: in CMDI1.2 the CMD_Version attribute must be present :)
+		$ccslinstance := $cmdCCSL,
+		$cmdInstance := $cmdInstancepath
+		
+        (: in CMDI1.2 the CMD_Version attribute must be present :)
         return 
         if ($cmdInstance/*:CMD/@CMDVersion="1.2") 
         then

@@ -26,7 +26,7 @@ var Container = React.createClass({displayName: 'Container',
 				React.DOM.div({className: "row clearfix"}, 
 					React.DOM.div({className: "col-md-12 column"}, 
 						React.DOM.div({className: "jumbotron"}, 
-							React.DOM.h2(null, "CMDI to MARC 21  transformer (experimental)"), 
+							React.DOM.h2(null, "CMDI to MARC 21  transformer (support for CMDI 1.2)"), 
 							React.DOM.p(null, "This web service allows you to convert a CMDI metadata file to the Marc 21 format.")
 						), 
 						FileUploadBox({onUpload: this.upload}), 

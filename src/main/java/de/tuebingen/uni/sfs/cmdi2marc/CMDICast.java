@@ -82,7 +82,7 @@ public class CMDICast {
 	public static File castFile(File cmdifile) throws Exception {
 		XQDataSource ds = new SaxonXQDataSource();
 		XQConnection conn = ds.getConnection();
-//		System.out.println("Cmdi2Marc: casting file " + cmdifile.getAbsolutePath());
+		System.out.println("Cmdi2Marc: casting file " + cmdifile.getAbsolutePath());
 
 		try (   InputStream cmdi2marcStream      = getInputStream("cmdi2marc.xquery");
 			InputStream cmdiInstanceStream = new FileInputStream(cmdifile);
@@ -92,61 +92,38 @@ public class CMDICast {
 			// get the schemaLocation using xpath
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			XPath xpath = xPathfactory.newXPath();
-                        
-                        /*
-                        // there's no default implementation for NamespaceContext...seems kind of silly, no?
-                        xpath.setNamespaceContext(new NamespaceContext() {
-                              public String getNamespaceURI(String prefix) {
-                                 if (prefix == null) throw new NullPointerException("Null prefix");
-                                 else if ("oai".equals(prefix)) return "http://www.openarchives.org/OAI/2.0/";
-                                 else if ("cmd".equals(prefix)) return "http://www.clarin.eu/cmd/";
-                                 else if ("xml".equals(prefix)) return XMLConstants.XML_NS_URI;
-                                   return XMLConstants.NULL_NS_URI;
-                                }
-
-                              // This method isn't necessary for XPath processing.
-                              public String getPrefix(String uri) {
-                                 throw new UnsupportedOperationException();
-                              }
-
-                              // This method isn't necessary for XPath processing either.
-                              public Iterator getPrefixes(String uri) {
-                                 throw new UnsupportedOperationException();
-                             }
-                        });
-
-                        String oai_check_string = "//*[namespace-uri()='http://www.openarchives.org/OAI/2.0/' or @*[namespace-uri()='http://www.openarchives.org/OAI/2.0/']]";
-                        */
-                        
-                        // works: XPathExpression schemaLocation = xpath.compile("string(//@*[local-name()='schemaLocation'])");
                         XPathExpression schemaLocation = xpath.compile("string(//*[local-name()=\"MdProfile\"]/text())");
 
-                        
-                        //XPathContext oai_ctx     = new XPathContext("xsi", "http://www.openarchives.org/OAI/2.0/") {};
-                        //XPathContext clarin_ctx  = new XPathContext("xsi", "http://www.clarin.eu/cmd/");
-                        // Nodes nodes = root.query("//html:head", ctx );
-                        
-                        // In case we have no envelope, we can do the following:
-                        String pureString = "string(//CMD/Header/MdProfile)";
-                        // In case we have an OAI-envelope, schemaLocation would return the OAI schema location...
-                        String oaiString = "string(/OAI-PMH/GetRecord[1]/record[1]/metadata[1]/*[namespace-uri()='http://www.clarin.eu/cmd/' and local-name()='CMD'][1]/*[namespace-uri()='http://www.clarin.eu/cmd/' and local-name()='Header'][1]/*[namespace-uri()='http://www.clarin.eu/cmd/' and local-name()='MdProfile'][1])";
-                                
-            
+			// In CMDI v1.2 and later, the CMDVersion attribute is obligatory. 
+			XPathExpression CMDIVersion = xpath.compile("string(/*:CMD/@CMDVersion)");
+
 			// try to parse the cmdifile
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                         factory.setNamespaceAware(true);
                         DocumentBuilder builder = factory.newDocumentBuilder();
 			Document cmdiFileDocument = builder.parse(cmdiFileStream);
+
+			// In CMDI 1.2 and later, this must have a value
+			String CMDIVersionString = (String) CMDIVersion.evaluate(cmdiFileDocument, XPathConstants.STRING);
+			System.out.println("CMD Version found -" + CMDIVersionString);
 			
 			String schemaLocationString = (String) schemaLocation.evaluate(cmdiFileDocument, XPathConstants.STRING);
 			System.out.println("schema location found -" + schemaLocationString + "- in cmdi instance " + cmdifile.getName());	
-                        
+
+			// superfluous for NaLiDa-based profiles			
                         if (schemaLocationString.endsWith("/xsd")) {
                             schemaLocationString = schemaLocationString.substring(0, schemaLocationString.length() - 4);
                         }
-                        
-                        String registryPrefix = "http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/";
-                        
+
+			// In later versions of CMDI 1.2, we may need to update this (or use regular expression).
+			String registryPrefix = "";
+			if (CMDIVersionString.endsWith("1.2")) {
+			    registryPrefix = "http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/1.x/profiles/";
+			} else {
+			    // this is for CMDI 1.1 or earlier versions of CMDI (approximately: could match 1.3 or later)
+			    registryPrefix = "http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/";
+			}
+			
                         // load the dynamic schema
                         InputStream dynamicSchemaStream = new URL(registryPrefix + schemaLocationString +"/xml").openStream();
                     
