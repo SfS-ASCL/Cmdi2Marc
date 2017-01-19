@@ -10,7 +10,11 @@ The conversion from CMDI to MARC21 is currently being served at:
 ```http://weblicht.sfs.uni-tuebingen.de/converter/Cmdi2Marc/ ```
 
 # Status
-The software is being released as v1.0.
+
+The software has no official release yet. The software has experimental support for CMDI v1.2.
+
+For a transformation to MARC-21 with less information loss, please consult NaLiDa2Marc. It exploits
+context-specific information from SfS-based CMDI profiles.
 
 # Publications
 
